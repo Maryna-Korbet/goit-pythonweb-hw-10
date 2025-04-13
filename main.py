@@ -3,13 +3,13 @@ from fastapi import FastAPI, Request, Depends, HTTPException, status
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.routes import contacts
+from routes import contacts_route
 from src.database.db import get_db
 
 
 app = FastAPI()
 
-app.include_router(contacts.router, prefix="/api")
+app.include_router(contacts_route.router, prefix="/api")
 
 
 @app.get("/")

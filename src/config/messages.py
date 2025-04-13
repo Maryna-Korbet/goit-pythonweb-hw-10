@@ -1,3 +1,5 @@
+# CONTACT
+
 contact_schema_first_name = {
     "en": "First name:",
 }
@@ -126,4 +128,30 @@ contact_additional_info_description = {
     "en": "Additional info:",
 }
 
+# USER
 
+user_not_found = {
+    "en": "User not found",
+}
+
+user_create = {
+    "en": "User created",
+}
+
+user_update = {
+    "en": "User updated",
+}
+
+user_delete = {
+    "en": "User deleted",
+}
+
+username_schema = {
+    "en": "Username:",
+}
+
+password_schema = {
+    "en": "Password:",
+}
+
+# AUTH

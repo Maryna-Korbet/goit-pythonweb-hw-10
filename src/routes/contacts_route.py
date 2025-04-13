@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.db import get_db
-from src.services.contacts import ContactService
-from src.schemas.contacts import (
+from services.contact_services import ContactService
+from schemas.contact_schema import (
     ContactSchema, 
     ContactResponse, 
     ContactUpdateSchema
