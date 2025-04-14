@@ -6,7 +6,7 @@ from sqlalchemy import select, or_, func, asc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.entity.models import Contact
-from schemas.contact_schema import ContactSchema, ContactUpdateSchema
+from src.schemas.contact_schema import ContactSchema, ContactUpdateSchema
 
 
 logger = logging.getLogger("uvicorn.error")

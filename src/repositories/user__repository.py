@@ -30,7 +30,7 @@ class UserRepository(BaseRepository):
     async def create_user(
         self, 
         user_data: UserCreate, 
-        hashed_password: str, 
+        hashed_password: str,
     ) -> User:
         """Create user."""
         user = User(
