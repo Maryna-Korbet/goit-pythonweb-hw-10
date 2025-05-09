@@ -1,4 +1,5 @@
 from datetime import datetime, date
+from typing import Optional
 
 from sqlalchemy import (
     String, 
@@ -105,7 +106,8 @@ class RefreshToken(Base):
     expired_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False
     )
-    revoked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    """ revoked_at: Mapped[datetime] | None = mapped_column(DateTime(timezone=True), nullable=True) """
+    revoked_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     ip_address: Mapped[str] = mapped_column(String(50), nullable=True)
     user_agent: Mapped[str] = mapped_column(Text, nullable=True)
 

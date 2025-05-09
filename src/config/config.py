@@ -9,6 +9,12 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str
     POSTGRES_PORT: str
 
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+    REFRESH_TOKEN_EXPIRE_DAYS: int
+    ALGORITHM: str
+    SECRET_KEY: str
+    REDIS_URL: str
+
     @property
     def DB_URL(self):
         """Database URL."""

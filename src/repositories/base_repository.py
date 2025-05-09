@@ -8,6 +8,7 @@ from src.entity.models import Base
 
 ModelType = TypeVar("ModelType", bound=Base)
 
+
 class BaseRepository:
     """Base repository class."""
     def __init__(self, session: AsyncSession, model: Type[ModelType]):
@@ -22,7 +23,9 @@ class BaseRepository:
 
     async def get_by_id(self, _id: int) -> ModelType | None:
         """Get entity by id."""
-        result = await self.db.execute(select(self.model).where(self.model.id == _id))
+        result = await self.db.execute(
+            select(self.model).where(self.model.id == _id)
+        )
         return result.scalars().first()
 
     async def create(self, instance: ModelType) -> ModelType:

@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.db import get_db
-from services.contact_services import ContactService
-from schemas.contact_schema import (
+from src.services.contact_services import ContactService
+from src.schemas.contact_schema import (
     ContactSchema, 
     ContactResponse, 
     ContactUpdateSchema
@@ -119,7 +119,9 @@ async def get_upcoming_birthdays(db: AsyncSession = Depends(get_db)):
         response_model=ContactResponse, 
         status_code=status.HTTP_201_CREATED
         )
-async def create_contact(body: ContactSchema, db: AsyncSession = Depends(get_db)):
+async def create_contact(
+    body: ContactSchema, 
+    db: AsyncSession = Depends(get_db)):
     """
     Create a new contact.
 

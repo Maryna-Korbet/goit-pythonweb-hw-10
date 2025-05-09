@@ -155,3 +155,35 @@ password_schema = {
 }
 
 # AUTH
+
+authenticate_wrong_user = {    
+    "en": "Wrong username or password",     
+}
+
+authentificate_email_not_confirmed = {    
+    "en": "Email not confirmed",     
+}
+
+user_exists = {    
+    "en": "User already exists",     
+}
+
+mail_exists = {    
+    "en": "Email already exists",     
+}
+
+invalid_token = {   
+    "en": "Invalid token",     
+}   
+
+revoked_token = {    
+    "en": "Token revoked",     
+}
+
+validate_credentials = {    
+    "en": "Invalid username or password",     
+}
+
+invalid_refresh_token = {    
+    "en": "Invalid refresh token",     
+}
