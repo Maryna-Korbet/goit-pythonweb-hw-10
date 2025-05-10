@@ -11,6 +11,8 @@ from src.schemas.contact_schema import (
     ContactUpdateSchema
     )
 from src.config import messages
+from src.core.depend_service import get_current_user
+from src.entity.models import User
 
 
 router = APIRouter(prefix="/contacts", tags=["contacts"])
@@ -22,6 +24,7 @@ async def get_contacts(
     limit: int = Query(10, ge=1, le=500),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
     """
     Get a list of contacts.
@@ -35,7 +38,7 @@ async def get_contacts(
         list[ContactResponse]: A list of contacts.
     """
     contact_service = ContactService(db)
-    return await contact_service.get_contacts(limit, offset)
+    return await contact_service.get_contacts(limit, offset, user)
 
 
 @router.get(
@@ -45,7 +48,11 @@ async def get_contacts(
     description="Description of the endpoint",
     response_description="Response description",
 )
-async def get_contact(contact_id: int, db: AsyncSession = Depends(get_db)):
+async def get_contact(
+    contact_id: int, 
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
     """
     Get a contact by ID.
 
@@ -57,7 +64,7 @@ async def get_contact(contact_id: int, db: AsyncSession = Depends(get_db)):
         ContactResponse: The retrieved contact.
     """
     contact_service = ContactService(db)
-    contact = await contact_service.get_contact(contact_id)
+    contact = await contact_service.get_contact(contact_id, user)
     if not contact:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -80,6 +87,7 @@ async def search_contacts(
         description=messages.contact_search_description.get("ua")
         ),
     db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
     """
     Search contacts by name, last name, or email.
@@ -92,7 +100,7 @@ async def search_contacts(
         list[ContactResponse]: A list of contacts that match the search query.
     """
     contact_service = ContactService(db)
-    return await contact_service.search_contacts(query)
+    return await contact_service.search_contacts(query, user)
 
 
 @router.get(
@@ -100,7 +108,10 @@ async def search_contacts(
     response_model=list[ContactResponse],
     description="Retrieve contacts with birthdays in the next 7 days.",
 )
-async def get_upcoming_birthdays(db: AsyncSession = Depends(get_db)):
+async def get_upcoming_birthdays(
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
     """
     Retrieve contacts who have birthdays within the next 7 days.
 
@@ -111,7 +122,7 @@ async def get_upcoming_birthdays(db: AsyncSession = Depends(get_db)):
         list[ContactResponse]: A list of contacts with upcoming birthdays.
     """
     contact_service = ContactService(db)
-    return await contact_service.upcoming_birthdays()
+    return await contact_service.upcoming_birthdays(user)
 
 
 @router.post(
@@ -121,7 +132,9 @@ async def get_upcoming_birthdays(db: AsyncSession = Depends(get_db)):
         )
 async def create_contact(
     body: ContactSchema, 
-    db: AsyncSession = Depends(get_db)):
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
     """
     Create a new contact.
 
@@ -133,14 +146,15 @@ async def create_contact(
         ContactResponse: The created contact.
     """
     contact_service = ContactService(db)
-    return await contact_service.create_contact(body)
+    return await contact_service.create_contact(body, user)
 
 
 @router.put("/{contact_id}", response_model=ContactResponse)
 async def update_contact(
     contact_id: int, 
     body: ContactUpdateSchema, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
     """
     Update a contact by ID.
@@ -154,7 +168,7 @@ async def update_contact(
         ContactResponse: The updated contact.
     """
     contact_service = ContactService(db)
-    contact = await contact_service.update_contact(contact_id, body)
+    contact = await contact_service.update_contact(contact_id, body, user)
     if not contact:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -164,7 +178,11 @@ async def update_contact(
 
 
 @router.delete("/{contact_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_contact(contact_id: int, db: AsyncSession = Depends(get_db)):
+async def delete_contact(
+    contact_id: int, 
+    db: AsyncSession = Depends(get_db), 
+    user: User = Depends(get_current_user)
+):
     """
     Delete a contact by ID.
 
@@ -176,7 +194,7 @@ async def delete_contact(contact_id: int, db: AsyncSession = Depends(get_db)):
         None
     """
     contact_service = ContactService(db)
-    contact = await contact_service.remove_contact(contact_id)
+    contact = await contact_service.remove_contact(contact_id, user)
     if not contact:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
