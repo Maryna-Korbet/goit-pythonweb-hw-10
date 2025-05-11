@@ -1,19 +1,35 @@
 from pydantic_settings import BaseSettings
-from pydantic import ConfigDict
+from pydantic import ConfigDict, EmailStr
 
 
 class Settings(BaseSettings):
+    # Database
     POSTGRES_DB: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_HOST: str
     POSTGRES_PORT: str
 
+    # JWT
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     REFRESH_TOKEN_EXPIRE_DAYS: int
     ALGORITHM: str
     SECRET_KEY: str
+
+    # Redis
     REDIS_URL: str
+
+    # Email
+    MAIL_USERNAME: EmailStr 
+    MAIL_PASSWORD: str 
+    MAIL_FROM: EmailStr 
+    MAIL_PORT: int 
+    MAIL_SERVER: str 
+    MAIL_FROM_NAME: str 
+    MAIL_STARTTLS: bool 
+    MAIL_SSL_TLS: bool 
+    USE_CREDENTIALS: bool 
+    VALIDATE_CERTS: bool 
 
     @property
     def DB_URL(self):

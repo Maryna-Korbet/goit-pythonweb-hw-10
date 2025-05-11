@@ -20,6 +20,13 @@ class UserRepository(BaseRepository):
         stmt = select(self.model).where(User.username == username)
         user = await self.db.execute(stmt)
         return user.scalar_one_or_none()
+    
+
+    async def get_user_by_email(self, email: str) -> User | None:
+        """Get user by email."""
+        stmt = select(self.model).where(User.email == email)
+        user = await self.db.execute(stmt)
+        return user.scalar_one_or_none()
 
 
     async def create_user(
@@ -35,8 +42,7 @@ class UserRepository(BaseRepository):
         return await self.create(user)
     
 
-    async def get_user_by_email(self, email: str) -> User | None:
-        """Get user by email."""
-        stmt = select(self.model).where(User.email == email)
-        user = await self.db.execute(stmt)
-        return user.scalar_one_or_none()
+    async def confirmed_email(self, email: str) -> None:
+        user = await self.get_user_by_email(email)
+        user.confirmed = True
+        await self.db.commit()

@@ -213,3 +213,17 @@ welcome_messages = {
         "ua": "Hello, {username}!"
     }
 }
+
+# EMAIL
+
+email_confirm_request = {    
+    "en": "Email confirm request sent",     
+}
+
+email_already_confirmed = {    
+    "en": "Email already confirmed",     
+}
+
+email_confirmed = {    
+    "en": "Email confirmed",     
+}

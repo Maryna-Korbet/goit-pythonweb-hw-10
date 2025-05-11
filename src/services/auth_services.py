@@ -16,6 +16,7 @@ from src.repositories.refresh_token_repository import RefreshTokenRepository
 from src.repositories.user_repository import UserRepository
 from src.schemas.user_schema import UserCreate
 
+
 redis_client = redis.from_url(settings.REDIS_URL)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
@@ -54,13 +55,13 @@ class AuthService:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=messages.authenticate_wrong_user.get("en"),
             )
-
+        """Check if user is confirmed."""
         if not user.confirmed:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=messages.authentificate_email_not_confirmed.get("en"),
             )
-
+        """Check if password is correct."""
         if not self._verify_password(password, user.hash_password):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -76,6 +77,7 @@ class AuthService:
                 status_code=status.HTTP_409_CONFLICT,
                 detail=messages.user_exists.get("en"),
             )
+        """Get user by email."""
         if await self.user_repository.get_user_by_email(str(user_data.email)):
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,

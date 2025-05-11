@@ -1,6 +1,12 @@
 import logging
 
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    status,
+    Request,
+    BackgroundTasks,
+)
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,6 +14,8 @@ from src.database.db import get_db
 from src.services.auth_services import AuthService, oauth2_scheme
 from src.schemas.token import TokenResponse, RefreshTokenRequest
 from src.schemas.user_schema import UserCreate, UserResponse
+from src.services.email_services import send_email
+
 
 router = APIRouter(prefix="/users", tags=["users"])
 logger = logging.getLogger("uvicorn.error")
@@ -21,10 +29,18 @@ def get_user_service(db: AsyncSession = Depends(get_db)):
 @router.post("/register", response_model=UserResponse)
 async def register(
     user_data: UserCreate,
+    background_tasks: BackgroundTasks,
+    request: Request,
     auth_service: AuthService = Depends(get_user_service)
 ):
-    """Register user."""
+    """Register user and send email."""
     user = await auth_service.register_user(user_data)
+    background_tasks.add_task(
+        send_email, 
+        user_data.email, 
+        user_data.username, 
+        str(request.base_url)
+    )
     return user
 
 

@@ -27,3 +27,8 @@ class UserService:
         """Get user by email."""
         user = await self.user_repository.get_user_by_email(email)
         return user
+
+    async def confirmed_email(self, email: str) -> None:
+        """Confirmed email."""
+        user = await self.user_repository.confirmed_email(email)
+        return user
