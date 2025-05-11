@@ -187,3 +187,8 @@ validate_credentials = {
 invalid_refresh_token = {    
     "en": "Invalid refresh token",     
 }
+
+
+requests_limit = {    
+    "en": "Too many requests. Please try again later",     
+}

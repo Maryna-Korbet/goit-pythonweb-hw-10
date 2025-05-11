@@ -1,13 +1,16 @@
 from datetime import datetime, timezone, timedelta
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from slowapi.errors import RateLimitExceeded
 
 from src.routes import contacts_route, auth_route
 from src.database.db import get_db, sessionmanager
+from src.config import messages
 
 
 schedulers = AsyncIOScheduler()
@@ -41,6 +44,16 @@ app = FastAPI(
     description="App for storing and managing contacts",
     version="1.0",
 )
+
+
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
+    """Rate limit handler."""
+    return JSONResponse(
+        status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+        content={"error": messages.requests_limit.get("en")},
+    )
+
 
 app.include_router(contacts_route.router, prefix="/api")
 app.include_router(auth_route.router, prefix="/api")
