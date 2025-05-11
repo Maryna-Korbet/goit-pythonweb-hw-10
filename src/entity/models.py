@@ -1,5 +1,6 @@
 from datetime import datetime, date
 from typing import Optional
+from enum import Enum
 
 from sqlalchemy import (
     String, 
@@ -9,6 +10,7 @@ from sqlalchemy import (
     Text,
     ForeignKey,
     Boolean,
+    Enum as SqlEnum
 )
 from sqlalchemy.orm import (
     DeclarativeBase, 
@@ -81,6 +83,13 @@ class Contact(Base):
     user: Mapped["User"] = relationship("User", backref="contacts", lazy="joined")
     
 
+class UserRole(str, Enum):
+    """Represents a user role in the system."""
+    USER = "USER"
+    MODERATOR = "MODERATOR"
+    ADMIN = "ADMIN"
+
+
 class User(Base):
     """Represents a user in the system."""
     __tablename__ = "users"
@@ -88,6 +97,10 @@ class User(Base):
     username: Mapped[str] = mapped_column(nullable=False, unique=True)
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
     hash_password: Mapped[str] = mapped_column(nullable=False)
+    role: Mapped[UserRole] = mapped_column(
+        SqlEnum(UserRole), default=UserRole.USER, nullable=False
+    )
+
     confirmed: Mapped[bool] = mapped_column(Boolean, default=False)
     refresh_tokens: Mapped[list["RefreshToken"]] = relationship(
         "RefreshToken", back_populates="user"
