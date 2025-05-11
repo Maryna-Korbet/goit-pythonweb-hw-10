@@ -189,6 +189,27 @@ invalid_refresh_token = {
 }
 
 
+# LIMIT
+
 requests_limit = {    
     "en": "Too many requests. Please try again later",     
+}
+
+
+# ROLE
+
+role_access_info = {    
+    "en": "You do not have permission to perform this action",     
+}
+
+welcome_messages = {
+    "admin": {
+        "ua": "Hello, {username}!"
+    },
+    "moderator": {
+        "ua": "Hello, {username}!"
+    },
+    "user": {
+        "ua": "Hello, {username}!"
+    }
 }
