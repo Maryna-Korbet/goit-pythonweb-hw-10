@@ -100,7 +100,7 @@ class User(Base):
     role: Mapped[UserRole] = mapped_column(
         SqlEnum(UserRole), default=UserRole.USER, nullable=False
     )
-
+    avatar: Mapped[str] = mapped_column(String(255), nullable=True)
     confirmed: Mapped[bool] = mapped_column(Boolean, default=False)
     refresh_tokens: Mapped[list["RefreshToken"]] = relationship(
         "RefreshToken", back_populates="user"

@@ -21,11 +21,6 @@ class UserRepository(BaseRepository):
         user = await self.db.execute(stmt)
         return user.scalar_one_or_none()
 
-    async def get_user_by_email(self, email: str) -> User | None:
-        """Get user by email."""
-        stmt = select(self.model).where(User.email == email)
-        user = await self.db.execute(stmt)
-        return user.scalar_one_or_none()
 
     async def create_user(
         self, 
@@ -38,3 +33,10 @@ class UserRepository(BaseRepository):
             hash_password=hashed_password,
         )
         return await self.create(user)
+    
+
+    async def get_user_by_email(self, email: str) -> User | None:
+        """Get user by email."""
+        stmt = select(self.model).where(User.email == email)
+        user = await self.db.execute(stmt)
+        return user.scalar_one_or_none()

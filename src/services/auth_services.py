@@ -13,7 +13,7 @@ from src.config.config import settings
 from src.config import messages
 from src.entity.models import User
 from src.repositories.refresh_token_repository import RefreshTokenRepository
-from src.repositories.user__repository import UserRepository
+from src.repositories.user_repository import UserRepository
 from src.schemas.user_schema import UserCreate
 
 redis_client = redis.from_url(settings.REDIS_URL)
