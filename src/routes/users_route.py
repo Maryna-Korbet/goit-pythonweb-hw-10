@@ -5,6 +5,8 @@ from fastapi import (
     HTTPException,
     status,
     BackgroundTasks,
+    UploadFile,
+    File,
 )
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -18,11 +20,14 @@ from src.core.depend_service import (
     get_current_admin_user,
     get_current_moderator_user,
     get_user_service,
+    get_current_user,
 )
 from src.services.user_services import UserService
 from src.schemas.email_schema import RequestEmail
 from src.services.email_services import send_email
 from src.core.email_token import get_email_from_token
+from src.services.upload_file_services import UploadFileService
+from src.config.config import settings
 
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -90,6 +95,21 @@ def read_moderator(
         .get("en")
         .format(username=current_user.username)
     }
+
+@router.patch("/avatar", response_model=UserResponse)
+async def update_avatar_user(
+    file: UploadFile = File(),
+    user: User = Depends(get_current_user),
+    user_service: UserService = Depends(get_user_service),
+):
+    """Update avatar user."""
+    avatar_url = UploadFileService(
+        settings.CLOUDINARY_NAME, 
+        settings.CLOUDINARY_API_KEY, 
+        settings.CLOUDINARY_API_SECRET,
+    ).upload_file(file, user.username)
+    user = await user_service.update_avatar_url(user.email, avatar_url)
+    return user
 
 
 @router.get("/admin")

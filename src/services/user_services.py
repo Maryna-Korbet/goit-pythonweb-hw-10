@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.entity.models import User
-from src.repositories.user_repository import UserRepository
+from src.repositories.user_repository import UserRepository 
 from src.schemas.user_schema import UserCreate
 from src.services.auth_services import AuthService
 
@@ -32,3 +32,7 @@ class UserService:
         """Confirmed email."""
         user = await self.user_repository.confirmed_email(email)
         return user
+
+    async def update_avatar_url(self, email: str, url: str):
+        """Update avatar URL"""
+        return await self.user_repository.update_avatar_url(email, url)
