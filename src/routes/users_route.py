@@ -3,6 +3,8 @@ from fastapi import (
     Depends,
     Request,
 )
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from src.services.auth_services import (
     AuthService,
@@ -18,9 +20,11 @@ from src.core.depend_service import (
 
 
 router = APIRouter(prefix="/users", tags=["users"])
+limiter = Limiter(key_func=get_remote_address)
 
 
 @router.get("/me", response_model=UserResponse)
+@limiter.limit("10/minute")
 async def me(
     request: Request,
     token: str = Depends(oauth2_scheme),
