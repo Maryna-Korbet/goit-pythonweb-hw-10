@@ -1,13 +1,46 @@
+from datetime import datetime, timezone, timedelta
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, Depends, HTTPException, status
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from src.routes import contacts_route, auth_route
-from src.database.db import get_db
+from src.database.db import get_db, sessionmanager
 
 
-app = FastAPI()
+schedulers = AsyncIOScheduler()
+
+
+async def cleanup_expired_tokens():
+    """Cleanup expired tokens."""
+    async with sessionmanager.session() as db:
+        now = datetime.now(timezone.utc)
+        cutoff = now - timedelta(days=7)
+        stmt = text(
+            "DELETE FROM refresh_tokens WHERE expired_at < :now OR (revoked_at IS NOT NULL AND expired_at < :cutoff)"
+        )
+        await db.execute(stmt, {"now": now, "cutoff": cutoff})
+        await db.commit()
+        print(f"Expired tokens cleaned up at [{now.strftime('%Y-%m-%d %H:%M:%S')}]")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """App lifespan."""
+    schedulers.add_job(cleanup_expired_tokens, "interval", hours=1)
+    schedulers.start()
+    yield
+    schedulers.shutdown()
+
+
+app = FastAPI(
+    lifespan=lifespan,
+    title="Contacts App",
+    description="App for storing and managing contacts",
+    version="1.0",
+)
 
 app.include_router(contacts_route.router, prefix="/api")
 app.include_router(auth_route.router, prefix="/api")

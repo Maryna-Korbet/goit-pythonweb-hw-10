@@ -1,8 +1,8 @@
 """Init
 
-Revision ID: ee72a0338de7
+Revision ID: 9fcfabdf3ab7
 Revises: 
-Create Date: 2025-04-13 18:26:54.711674
+Create Date: 2025-05-10 18:47:08.876025
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'ee72a0338de7'
+revision: str = '9fcfabdf3ab7'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -33,8 +33,8 @@ def upgrade() -> None:
     )
     op.create_table('contacts',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('first_name', sa.String(length=3, collation=50), nullable=False, comment='First name:'),
-    sa.Column('last_name', sa.String(length=3, collation=50), nullable=False, comment='Last name:'),
+    sa.Column('first_name', sa.String(length=3, collation=16), nullable=False, comment='First name:'),
+    sa.Column('last_name', sa.String(length=3, collation=16), nullable=False, comment='Last name:'),
     sa.Column('email', sa.String(length=5, collation=255), nullable=False, comment='Email:'),
     sa.Column('phone', sa.String(length=10, collation=15), nullable=True, comment='Phone:'),
     sa.Column('birthday', sa.Date(), nullable=True, comment='Birthday:'),
@@ -53,7 +53,7 @@ def upgrade() -> None:
     sa.Column('token_hash', sa.String(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('expired_at', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('revoked_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('revoked_at', sa.DateTime(), nullable=True),
     sa.Column('ip_address', sa.String(length=50), nullable=True),
     sa.Column('user_agent', sa.Text(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
