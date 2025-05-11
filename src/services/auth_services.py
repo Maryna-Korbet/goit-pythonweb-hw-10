@@ -8,6 +8,7 @@ import redis.asyncio as redis
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
+from libgravatar import Gravatar
 
 from src.config.config import settings
 from src.config import messages
@@ -83,10 +84,19 @@ class AuthService:
                 status_code=status.HTTP_409_CONFLICT,
                 detail=messages.mail_exists.get("en"),
             )
+        """User avatar."""
+        avatar = None
+        try:
+            g = Gravatar(user_data.email)
+            avatar = g.get_image()
+        except Exception as e:
+            print(e)
+
         hashed_password = self._hash_password(user_data.password)
         user = await self.user_repository.create_user(
             user_data, 
-            hashed_password
+            hashed_password,
+            avatar
         )
         return user
 

@@ -33,11 +33,13 @@ class UserRepository(BaseRepository):
         self, 
         user_data: UserCreate, 
         hashed_password: str,
+        avatar: str
     ) -> User:
         """Create user."""
         user = User(
             **user_data.model_dump(exclude_unset=True, exclude={"password"}),
             hash_password=hashed_password,
+            avatar=avatar,
         )
         return await self.create(user)
     
